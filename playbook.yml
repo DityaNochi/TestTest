@@ -1,0 +1,37 @@
+---
+- name: обновление php 5.6 до php 7.2
+  hosts: all  
+
+  become: yes 
+
+  tasks:
+
+    - name: удаление php 5.6
+      apt:
+        name:
+          - php5.6*
+          - php-common
+        state: absent
+        autoremove: yes
+
+    - name: установка php 7.2 
+      apt:
+        name:
+          - php7.2
+          - php7.2-fpm
+          - php7.2-common
+          - php7.2-mbstring
+          - php7.2-xml
+          - php7.2-mysql
+          - php7.2-curl 
+          - php7.2-zip
+        state: present
+
+    - name: Перезапуск php-fpm
+      service:
+        name: php7.2-fpm
+        state: restarted
+      when: "'php7.2-fpm' in ansible_facts.packages" 
+
+    - name: проверка версии php
+      command: php -v
